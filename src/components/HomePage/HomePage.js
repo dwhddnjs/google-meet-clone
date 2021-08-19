@@ -13,7 +13,7 @@ const HomePage = () => {
             <h2>Premium video meetings. Now free for everyone.</h2>
             <p>
               We re-engineered the service we built for secure business
-              meetings, Google Meet, to make it free and available for all.
+              meetings,Google Meet, to make it free and available for all.
             </p>
             <div className="action-btn">
               <button className="btn green">

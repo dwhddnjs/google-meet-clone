@@ -1,9 +1,21 @@
-import './NoMatch.scss'
+import { Link } from "react-router-dom";
+import "./NoMatch.scss";
+import Header from "./../UI/Header/Header";
 
 const NoMatch = () => {
-    return (
-        <h1>NoMatch</h1>
-    ) 
-}
+  return (
+    <div className="no-match">
+      <Header />
+      <div className="no-match__content">
+        <h2>Invaild video call name.</h2>
+        <div className="action-btn">
+          <Link className="btn green" to="/">
+            Return to home screen
+          </Link>
+        </div>
+      </div>
+    </div>
+  );
+};
 
-export default NoMatch
+export default NoMatch;
