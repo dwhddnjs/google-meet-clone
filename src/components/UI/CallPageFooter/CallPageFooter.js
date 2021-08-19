@@ -25,7 +25,7 @@ const CallPageFooter = () => {
           <FontAwesomeIcon className="icon" icon={faMicrophone} />
         </div>
         <div className="icon-block">
-          <FontAwesomeIcon className="icon" icon={faPhone} />
+          <FontAwesomeIcon className="icon red" icon={faPhone} />
         </div>
         <div className="icon-block">
           <FontAwesomeIcon className="icon" icon={faVideo} />
