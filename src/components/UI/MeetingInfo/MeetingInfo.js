@@ -16,13 +16,13 @@ const MeetingInfo = () => {
         <FontAwesomeIcon className="icon" icon={faTimes} />
       </div>
       <button className="add-people-btn">
-        <FontAwesomeIcon icon={faUser} />
+        <FontAwesomeIcon className="icon" icon={faUser} />
         Add Others
       </button>
       <p className="info-text">
         Or share this meeting link with others you want in the meeting
       </p>
-      <div className="meet-link">
+      <div className="meeting-link">
         <span>Some random URL</span>
         <FontAwesomeIcon className="icon" icon={faCopy} />
       </div>
