@@ -8,12 +8,18 @@ import {
 
 import "./MeetingInfo.scss";
 
-const MeetingInfo = () => {
+const MeetingInfo = ({ setMeetInfoPopup, url }) => {
   return (
     <div className="meeting-info-block">
       <div className="meeting-header">
         <h3>Your meeting's ready</h3>
-        <FontAwesomeIcon className="icon" icon={faTimes} />
+        <FontAwesomeIcon
+          className="icon"
+          icon={faTimes}
+          onClick={() => {
+            setMeetInfoPopup(false);
+          }}
+        />
       </div>
       <button className="add-people-btn">
         <FontAwesomeIcon className="icon" icon={faUser} />
@@ -22,9 +28,13 @@ const MeetingInfo = () => {
       <p className="info-text">
         Or share this meeting link with others you want in the meeting
       </p>
-      <div className="meeting-link">
-        <span>Some random URL</span>
-        <FontAwesomeIcon className="icon" icon={faCopy} />
+      <div className="meet-link">
+        <span>{url}</span>
+        <FontAwesomeIcon
+          className="icon"
+          icon={faCopy}
+          onClick={() => navigator.clipboard.writeText(url)}
+        />
       </div>
       <div className="permission-text">
         <FontAwesomeIcon className="icon" icon={faShieldAlt} />
