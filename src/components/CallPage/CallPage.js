@@ -1,23 +1,109 @@
-import { useParams } from "react-router";
+import { useEffect, useReducer, useState } from "react";
+import { useHistory, useParams } from "react-router-dom";
+import { getRequest, postRequest } from "./../../utils/apiRequests";
+import {
+  BASE_URL,
+  GET_CALL_ID,
+  SAVE_CALL_ID,
+} from "./../../utils/apiEndpoints";
+import io from "socket.io-client";
 import CallPageHeader from "./../UI/CallPageHeader/CallPageHeader";
 import CallPageFooter from "./../UI/CallPageFooter/CallPageFooter";
 import MeetingInfo from "./../UI/MeetingInfo/MeetingInfo";
 import Messenger from "./../UI/Messenger/Messenger";
+import MessageListReducer from "./../../reducers/MessageListReducer";
+import Peer from "simple-peer";
+
 import "./CallPage.scss";
-import { useEffect, useState } from "react";
+
+let peer = null;
+const socket = io.connect("http://localhost:4000");
+const initialState = [];
 
 const CallPage = () => {
+  const history = useHistory();
   let { id } = useParams();
   const isAdmin = window.location.hash == "#init" ? true : false;
   const url = `${window.location.origin}${window.location.pathname}`;
-  console.log(isAdmin, url);
+  let alertTimeout = null;
 
+  const [messageList, messageListReducer] = useReducer(
+    MessageListReducer,
+    initialState
+  );
+
+  const [streamObj, setStreamObj] = useState();
+  const [screenCastStream, setScreenCastStream] = useState();
   const [meetInfoPopup, setMeetInfoPopup] = useState(false);
+  const [isPresenting, setIsPresenting] = useState(false);
+  const [isMessenger, setIsMessenger] = useState({});
+  const [isAudio, setIsAudio] = useState(true);
+
+  const getRecieverCode = async () => {
+    const response = await getRequest(`${BASE_URL}${GET_CALL_ID}/${id}`);
+    if (response.code) {
+      peer.signal(response.code);
+    }
+  };
+
+  const initWebRTC = () => {
+    navigator.mediaDevices
+      .getUserMedia({
+        video: true,
+        audio: true,
+      })
+      .then((stream) => {
+        peer = new Peer({
+          initiator: isAdmin,
+          trickle: false,
+          stream: stream,
+        });
+
+        if (!isAdmin) {
+          getRecieverCode();
+        }
+
+        peer.on("signal", async (data) => {
+          if (isAdmin) {
+            let payload = {
+              id,
+              signalData: data,
+            };
+            await postRequest(`${BASE_URL}${SAVE_CALL_ID}`, payload);
+          } else {
+            socket.emit("code", data, (callback) => {
+              console.log("code sent");
+            });
+          }
+        });
+
+        peer.on("connect", () => {
+          console.log("peer connected");
+        });
+        peer.on("stream", (stream) => {
+          let video = document.querySelector("video");
+
+          if ("srcObject" in video) {
+            video.srcObject = stream;
+          } else {
+            video.src = window.URL.createObjectURL(stream);
+          }
+          video.play();
+        });
+      })
+      .catch(() => {
+        console.log("error");
+      });
+  };
 
   useEffect(() => {
     if (isAdmin) {
       setMeetInfoPopup(true);
     }
+    initWebRTC();
+    socket.on("code", (data) => {
+      peer.signal(data);
+    });
   }, []);
 
   return (
