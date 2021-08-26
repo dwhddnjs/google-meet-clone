@@ -143,6 +143,17 @@ const CallPage = () => {
     setIsPresenting(false);
   };
 
+  const toggleAudio = (value) => {
+    streamObj.getAudioTracks()[0].enabled = value;
+    setIsAudio(value);
+  };
+
+  const disconnectCall = () => {
+    peer.destroy();
+    history.push("/");
+    window.location.reload();
+  };
+
   return (
     <div className="callpage-container">
       <video className="video-container" src="" controls></video>
@@ -151,6 +162,9 @@ const CallPage = () => {
         isPresenting={isPresenting}
         stopScreenShare={stopScreenShare}
         screenShare={screenShare}
+        isAudio={isAudio}
+        toggleAudio={toggleAudio}
+        disconnectCall={disconnectCall}
       />
       {isAdmin && meetInfoPopup && (
         <MeetingInfo setMeetInfoPopup={setMeetInfoPopup} url={url} />
