@@ -39,6 +39,16 @@ const CallPage = () => {
   const [isMessenger, setIsMessenger] = useState({});
   const [isAudio, setIsAudio] = useState(true);
 
+  useEffect(() => {
+    if (isAdmin) {
+      setMeetInfoPopup(true);
+    }
+    initWebRTC();
+    socket.on("code", (data) => {
+      peer.signal(data);
+    });
+  }, []);
+
   const getRecieverCode = async () => {
     const response = await getRequest(`${BASE_URL}${GET_CALL_ID}/${id}`);
     if (response.code) {
@@ -53,6 +63,8 @@ const CallPage = () => {
         audio: true,
       })
       .then((stream) => {
+        setStreamObj(stream);
+
         peer = new Peer({
           initiator: isAdmin,
           trickle: false,
@@ -96,21 +108,46 @@ const CallPage = () => {
       });
   };
 
-  useEffect(() => {
-    if (isAdmin) {
-      setMeetInfoPopup(true);
-    }
-    initWebRTC();
-    socket.on("code", (data) => {
-      peer.signal(data);
+  const screenShare = () => {
+    navigator.mediaDevices.getDisplyMedia({ cursor }).then((screenStream) => {
+      peer.replaceTrack(
+        streamObj.getVideoTracks()[0],
+        screenStream.getVideoTracks()[0],
+        streamObj
+      );
+      setScreenCastStream(screenStream);
+      screenStream.getTracks()[0].onended = () => {
+        peer.replaceTrack(
+          screenStream.getVideoTracks()[0],
+          streamObj.getVideoTracks()[0],
+          streamObj
+        );
+      };
+      setIsPresenting(true);
     });
-  }, []);
+  };
+
+  const stopScreenShare = () => {
+    screenCastStream.getVideoTracks().forEach((track) => {
+      track.stop();
+    });
+    peer.replaceTrack(
+      screenCastStream.getVideoTracks()[0],
+      streamObj.getVideoTracks()[0],
+      streamObj
+    );
+    setIsPresenting(false);
+  };
 
   return (
     <div className="callpage-container">
       <video className="video-container" src="" controls></video>
       <CallPageHeader />
-      <CallPageFooter />
+      <CallPageFooter
+        isPresenting={isPresenting}
+        stopScreenShare={stopScreenShare}
+        screenShare={screenShare}
+      />
       {isAdmin && meetInfoPopup && (
         <MeetingInfo setMeetInfoPopup={setMeetInfoPopup} url={url} />
       )}
