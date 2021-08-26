@@ -108,23 +108,27 @@ const CallPage = () => {
       });
   };
 
+  // 2404
+
   const screenShare = () => {
-    navigator.mediaDevices.getDisplyMedia({ cursor }).then((screenStream) => {
-      peer.replaceTrack(
-        streamObj.getVideoTracks()[0],
-        screenStream.getVideoTracks()[0],
-        streamObj
-      );
-      setScreenCastStream(screenStream);
-      screenStream.getTracks()[0].onended = () => {
+    navigator.mediaDevices
+      .getDisplayMedia({ cursor: true })
+      .then((screenStream) => {
         peer.replaceTrack(
-          screenStream.getVideoTracks()[0],
           streamObj.getVideoTracks()[0],
+          screenStream.getVideoTracks()[0],
           streamObj
         );
-      };
-      setIsPresenting(true);
-    });
+        setScreenCastStream(screenStream);
+        screenStream.getTracks()[0].onended = () => {
+          peer.replaceTrack(
+            screenStream.getVideoTracks()[0],
+            streamObj.getVideoTracks()[0],
+            streamObj
+          );
+        };
+        setIsPresenting(true);
+      });
   };
 
   const stopScreenShare = () => {
