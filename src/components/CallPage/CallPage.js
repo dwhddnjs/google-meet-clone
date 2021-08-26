@@ -108,8 +108,6 @@ const CallPage = () => {
       });
   };
 
-  // 2404
-
   const screenShare = () => {
     navigator.mediaDevices
       .getDisplayMedia({ cursor: true })
@@ -174,6 +172,4 @@ const CallPage = () => {
   );
 };
 
-export default CallPage; //test
-
-//19:09
+export default CallPage;
