@@ -230,6 +230,3 @@ const CallPage = () => {
 };
 
 export default CallPage;
-
-// 28:00
-// footer already done
