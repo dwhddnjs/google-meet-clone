@@ -5,15 +5,41 @@ import {
   faCommentAlt,
   faPaperPlane,
 } from "@fortawesome/free-solid-svg-icons";
+import { formatDate } from "./../../../utils/helpers";
 
 import "./Messenger.scss";
+import { useState } from "react";
 
-const Messenger = () => {
+const Messenger = ({ setIsMessenger, sendMsg, messageList }) => {
+  const [msg, setMsg] = useState("");
+
+  const handleChangeMsg = (e) => {
+    setMsg(e.target.value);
+  };
+
+  const handleKeyDown = (e) => {
+    if (e.key === "Enter") {
+      sendMsg(msg);
+      setMsg("");
+    }
+  };
+
+  const handleSendMsg = () => {
+    sendMsg(msg);
+    setMsg("");
+  };
+
   return (
     <div className="messenger-container">
       <div className="messenger-header">
         <h3>Meeting Details</h3>
-        <FontAwesomeIcon className="icon" icon={faTimes} />
+        <FontAwesomeIcon
+          className="icon"
+          icon={faTimes}
+          onClick={() => {
+            setIsMessenger(false);
+          }}
+        />
       </div>
       <div className="messeger-header-tabs">
         <div className="tab">
@@ -26,16 +52,27 @@ const Messenger = () => {
         </div>
       </div>
       <div className="chat-section">
-        <div className="chat-block">
-          <div className="sender">
-            you <small>10 PM</small>
+        {messageList.map((item) => (
+          <div key={item.time} className="chat-block">
+            <div className="sender">
+              {item.user} <small>{formatDate(item.time)}</small>
+            </div>
+            <p className="msg">Here comes a actual msg</p>
           </div>
-          <p className="msg">Here comes a actual msg</p>
-        </div>
+        ))}
       </div>
       <div className="send-msg-section">
-        <input placeholder="Send a message to everyone" />
-        <FontAwesomeIcon className="icon" icon={faPaperPlane} />
+        <input
+          placeholder="Send a message to everyone"
+          value={msg}
+          onChange={(e) => handleChangeMsg(e)}
+          onKeyDown={(e) => handleKeyDown(e)}
+        />
+        <FontAwesomeIcon
+          className="icon"
+          icon={faPaperPlane}
+          onClick={handleSendMsg}
+        />
       </div>
     </div>
   );

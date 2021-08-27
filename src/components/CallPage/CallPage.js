@@ -93,6 +93,36 @@ const CallPage = () => {
         peer.on("connect", () => {
           console.log("peer connected");
         });
+
+        peer.on("data", (data) => {
+          clearTimeout(alertTimeout);
+          messageListReducer({
+            type: "addMessage",
+            payload: {
+              user: "other",
+              msg: data.toString(),
+              time: Date.now(),
+            },
+          });
+
+          setMessageAlert({
+            alert: true,
+            isPopup: true,
+            payload: {
+              user: "other",
+              msg: data.toString(),
+            },
+          });
+
+          alertTimeout = setTimeout(() => {
+            setMessageAlert({
+              ...messageAlert,
+              isPopup: false,
+              payload: {},
+            });
+          }, 10000);
+        });
+
         peer.on("stream", (stream) => {
           let video = document.querySelector("video");
 
@@ -191,7 +221,9 @@ const CallPage = () => {
           sendMsg={sendMsg}
           messageList={messageList}
         />
-      ) : null}
+      ) : (
+        messageAlert.isPopup && <Alert messageAlert={messageAlert} />
+      )}
     </div>
   );
 };
