@@ -57,7 +57,7 @@ const Messenger = ({ setIsMessenger, sendMsg, messageList }) => {
             <div className="sender">
               {item.user} <small>{formatDate(item.time)}</small>
             </div>
-            <p className="msg">Here comes a actual msg</p>
+            <p className="msg">{item.msg}</p>
           </div>
         ))}
       </div>

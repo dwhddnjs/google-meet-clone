@@ -12,6 +12,7 @@ import CallPageFooter from "./../UI/CallPageFooter/CallPageFooter";
 import MeetingInfo from "./../UI/MeetingInfo/MeetingInfo";
 import Messenger from "./../UI/Messenger/Messenger";
 import MessageListReducer from "./../../reducers/MessageListReducer";
+import Alert from "../UI/Alert/Alert";
 import Peer from "simple-peer";
 
 import "./CallPage.scss";
