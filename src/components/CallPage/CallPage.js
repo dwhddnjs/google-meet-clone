@@ -38,6 +38,7 @@ const CallPage = () => {
   const [isPresenting, setIsPresenting] = useState(false);
   const [isMessenger, setIsMessenger] = useState({});
   const [isAudio, setIsAudio] = useState(true);
+  const [messageAlert, setMessageAlert] = useState();
 
   useEffect(() => {
     if (isAdmin) {
@@ -108,6 +109,18 @@ const CallPage = () => {
       });
   };
 
+  const sendMsg = (msg) => {
+    peer.send(msg);
+    messageListReducer({
+      type: "addMessage",
+      payload: {
+        user: "you",
+        msg: msg,
+        time: Date.now(),
+      },
+    });
+  };
+
   const screenShare = () => {
     navigator.mediaDevices
       .getDisplayMedia({ cursor: true })
@@ -155,7 +168,12 @@ const CallPage = () => {
   return (
     <div className="callpage-container">
       <video className="video-container" src="" controls></video>
-      <CallPageHeader />
+      <CallPageHeader
+        isMessenger={isMessenger}
+        setIsMessenger={setIsMessenger}
+        messageAlert={messageAlert}
+        setMessageAlert={setMessageAlert}
+      />
       <CallPageFooter
         isPresenting={isPresenting}
         stopScreenShare={stopScreenShare}
@@ -167,7 +185,13 @@ const CallPage = () => {
       {isAdmin && meetInfoPopup && (
         <MeetingInfo setMeetInfoPopup={setMeetInfoPopup} url={url} />
       )}
-      <Messenger />
+      {isMessenger ? (
+        <Messenger
+          setIsMessenger={setIsMessenger}
+          sendMsg={sendMsg}
+          messageList={messageList}
+        />
+      ) : null}
     </div>
   );
 };
