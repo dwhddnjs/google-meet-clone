@@ -55,5 +55,3 @@ const CallPageHeader = ({
 };
 
 export default CallPageHeader;
-
-// 38:22
